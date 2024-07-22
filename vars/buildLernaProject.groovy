@@ -1,5 +1,5 @@
 def call(Map config = [:]) {
-    sh "echo ${config.dayofWeek}"
+    sh "echo Hello ${config.name}. Today is ${config.dayOfWeek}."
     // Define the file to check
     def file = 'lerna.json'
     
