@@ -12,12 +12,14 @@ def call(Map config = [:]) {
         
         if (changedPackages) {
             echo "Changed packages:"
-            echo "${changedPackages}"
+            changedPackages.each { pkg ->
+                echo "${pkg}"
+            }
             
             // Build each changed package with Lerna
-            changedPackages.split('\n').each { package ->
-                echo "Building package: ${package}"
-                sh "npx lerna run build --scope=${package}"
+            for (pkg in changedPackages) {
+                echo "Building package: ${pkg}"
+                sh "npx lerna run build --scope=${pkg}"
             }
         } else {
             echo "No changes detected in the workspaces directory."
@@ -30,6 +32,7 @@ def call(Map config = [:]) {
 // Method to get the list of changed packages
 def getChangedPackages() {
     def command = 'git diff --name-only HEAD HEAD~1 | grep "^packages/" | awk -F/ \'{print $2}\' | sort | uniq'
-    def changedPackages = sh(script: command, returnStdout: true).trim()
-    return changedPackages
+    def changedPackagesOutput = sh(script: command, returnStdout: true).trim()
+    def changedPackagesList = changedPackagesOutput ? changedPackagesOutput.split('\n') : []
+    return changedPackagesList
 }
