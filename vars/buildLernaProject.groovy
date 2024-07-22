@@ -19,6 +19,12 @@ def call(Map config = [:]) {
             // Build each changed package with Lerna
             for (pkg in changedPackages) {
                 echo "Building package: ${pkg}"
+                // Cache act weir
+                // The local cache artifact in "/var/jenkins_home/workspace/test/node_modules/.cache/nx/8408733849954308460" was not been generated on this machine.
+                // As a result, the cache's content integrity cannot be confirmed, which may make cache restoration potentially unsafe.
+                // If your machine ID has changed since the artifact was cached, run "nx reset" to fix this issue.
+                // Read about the error and how to address it here: https://nx.dev/recipes/troubleshooting/unknown-local-cache
+                sh "rm -rf node_modules/.cache/nx"
                 sh "npx lerna run build --scope=${pkg}"
             }
         } else {
